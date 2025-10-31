@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { useRef, useState } from 'react';
 import ImageUploadIcon from '@/assets/jsx-icons/image-upload-icon';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router';
 
 const formSchema = z.object({
   image: z
@@ -91,9 +92,11 @@ const Settings = () => {
 
   return (
     <div className="flex flex-col items-center gap-6 pb-6">
-      <Button className="w-max cursor-pointer self-start">
-        <ArrowLeft />
-        Back
+      <Button asChild className="w-max cursor-pointer self-start">
+        <Link to={'/'}>
+          <ArrowLeft />
+          Back
+        </Link>
       </Button>
       <form
         id="settings-form"
