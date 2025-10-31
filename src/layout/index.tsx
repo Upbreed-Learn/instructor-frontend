@@ -18,7 +18,7 @@ const RootLayout = () => {
         <div className="flex w-full max-w-240 flex-col">
           <div
             className={cn(
-              'fixed z-20 flex w-240 gap-7 items-center justify-end bg-white pt-14',
+              'fixed z-20 flex w-240 items-center justify-end gap-7 bg-white pt-14',
               pathname.includes('blog/create') && 'hidden',
             )}
           >
@@ -30,13 +30,16 @@ const RootLayout = () => {
             >
               Hello, Winner Okorondudu
             </p>
-            <Menu size={24}/>
-            <AvatarCustom src={'https://github.com/shadcn.png'} alt='avatar' fallback='A' className='size-13.75'/>
+            <Menu size={24} />
+            <AvatarCustom
+              src={'https://github.com/shadcn.png'}
+              alt="avatar"
+              fallback="A"
+              className="size-13.75"
+            />
           </div>
           <div
-            className={cn(
-              !pathname.includes('blog/create') ? 'mt-[7.225625rem]' : 'pt-7',
-            )}
+            className={cn(!pathname.includes('blog/create') ? 'mt-32' : 'pt-7')}
           >
             <Outlet />
           </div>

@@ -4,6 +4,10 @@ import QueryProvider from './lib/query-provider';
 import RootLayout from './layout';
 import Overview from './overview';
 import Courses from './courses';
+import Insights from './insights';
+import Earnings from './earnings';
+import Sessions from './sessions';
+import Settings from './settings';
 
 const router = createBrowserRouter([
   {
@@ -13,55 +17,28 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        // element: <Dashboard />,
         element: <Overview />,
       },
-      // {
-      //   path: "/projects",
-      //   children: [
-      //     {
-      //       index: true,
-      //       element: <Projects />,
-      //     },
-      //     {
-      //       path: "/projects/:id",
-      //       element: <UpdateProject />,
-      //     },
-      //   ],
-      // },
       {
         path: '/courses',
         element: <Courses />,
       },
-      // {
-      //   path: "/finance",
-      //   element: <Finance />,
-      // },
-      // {
-      //   path: "/instructors",
-      //   element: <Instructors />,
-      // },
-      // {
-      //   path: "/blog",
-      //   children: [
-      //     {
-      //       index: true,
-      //       element: <Blogs />,
-      //     },
-      //     {
-      //       path: "/blog/create",
-      //       element: <CreateBlog />,
-      //     },
-      //     {
-      //       path: "/blog/:id",
-      //       element: <CreateBlog />,
-      //     },
-      //   ],
-      // },
-      // {
-      //   path: "/1-1-sessions",
-      //   element: <OneOneSessions />,
-      // },
+      {
+        path: '/insights',
+        element: <Insights />,
+      },
+      {
+        path: '/earnings',
+        element: <Earnings />,
+      },
+      {
+        path: '/sessions',
+        element: <Sessions />,
+      },
+      {
+        path: '/settings',
+        element: <Settings />,
+      },
     ],
   },
   // {
