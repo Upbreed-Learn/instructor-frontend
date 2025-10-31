@@ -8,6 +8,7 @@ import Coin from '@/assets/jsx-icons/coin';
 import UsersMore from '@/assets/jsx-icons/users-more';
 import Logout from '@/assets/jsx-icons/logout';
 import { Eye } from 'lucide-react';
+import Settings from '@/assets/jsx-icons/settings';
 
 const ROUTES = [
   {
@@ -88,8 +89,7 @@ const Sidebar = () => {
                     className={cn(
                       'grid-area-stack transition-opacity',
                       pathname.includes('courses') && 'opacity-0',
-                      !pathname.includes('courses') &&
-                        'group-hover:opacity-0!',
+                      !pathname.includes('courses') && 'group-hover:opacity-0!',
                     )}
                   />
                 </div>
@@ -139,8 +139,7 @@ const Sidebar = () => {
                     className={cn(
                       'grid-area-stack transition-opacity',
                       pathname === '/sessions' && 'opacity-100',
-                      pathname !== '/sessions' &&
-                        'group-hover:opacity-100!',
+                      pathname !== '/sessions' && 'group-hover:opacity-100!',
                     )}
                   />
                   <UsersMore
@@ -157,6 +156,22 @@ const Sidebar = () => {
           ))}
         </div>
         <div className="flex flex-col gap-4 px-6">
+          <NavLink
+            to={'/settings'}
+            className={({ isActive }) =>
+              cn(
+                'flex items-center gap-4 text-xs/[100%] font-semibold text-white',
+                isActive && 'text-[#D0EA50]',
+              )
+            }
+          >
+            {pathname === '/settings' ? (
+              <Settings stroke={'#D0EA50'} />
+            ) : (
+              <Settings />
+            )}
+            <span>Settings</span>
+          </NavLink>
           <button
             onClick={() => {
               (Cookies.remove('rf'), navigate('/auth/login'));
