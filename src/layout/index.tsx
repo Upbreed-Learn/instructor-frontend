@@ -19,7 +19,7 @@ const RootLayout = () => {
           <div
             className={cn(
               'fixed z-20 flex w-240 items-center justify-end gap-7 bg-white pt-14',
-              pathname.includes('blog/create') && 'hidden',
+              pathname.includes('settings') && 'hidden',
             )}
           >
             <p
@@ -39,7 +39,7 @@ const RootLayout = () => {
             />
           </div>
           <div
-            className={cn(!pathname.includes('blog/create') ? 'mt-32' : 'pt-7')}
+            className={cn(!pathname.includes('settings') ? 'mt-32' : 'pt-7')}
           >
             <Outlet />
           </div>
