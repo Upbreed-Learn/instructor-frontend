@@ -1,13 +1,10 @@
-import { Outlet, useLocation, useParams } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
 import Sidebar from './sidebar';
 import { cn } from '@/lib/utils';
-// import 'prosemirror-view/style/prosemirror.css';
 import { Toaster } from '@/components/ui/sonner';
-import { Menu } from 'lucide-react';
-import AvatarCustom from '@/components/ui/custom/avatar';
+import Navbar from './navbar';
 
 const RootLayout = () => {
-  const { id } = useParams();
   const { pathname } = useLocation();
 
   return (
@@ -16,28 +13,7 @@ const RootLayout = () => {
       <Sidebar />
       <main className="ml-[15.58625rem] flex w-full justify-center">
         <div className="flex w-full max-w-240 flex-col">
-          <div
-            className={cn(
-              'fixed z-20 flex w-240 items-center justify-end gap-7 bg-white pt-14',
-              pathname.includes('settings') && 'hidden',
-            )}
-          >
-            <p
-              className={cn(
-                'text-xs/[100%] font-bold text-[#737373]',
-                id && 'hidden',
-              )}
-            >
-              Hello, Winner Okorondudu
-            </p>
-            <Menu size={24} />
-            <AvatarCustom
-              src={'https://github.com/shadcn.png'}
-              alt="avatar"
-              fallback="A"
-              className="size-13.75"
-            />
-          </div>
+          <Navbar />
           <div
             className={cn(!pathname.includes('settings') ? 'mt-32' : 'pt-7')}
           >
