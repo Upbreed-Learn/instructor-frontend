@@ -4,18 +4,9 @@ import InstructorIcon from '@/assets/jsx-icons/instructor-icon';
 import LessonsIcon from '@/assets/jsx-icons/lessons-icon';
 import ViewsIcon from '@/assets/jsx-icons/views-icon';
 import AvatarCustom from '@/components/ui/custom/avatar';
-// import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { CourseDetailsType } from '@/lib/constants';
 import type { ColumnDef } from '@tanstack/react-table';
-
-// export interface CoursesType {
-//   instructorImage: string;
-//   courseTitle: string;
-//   courseDuration: string;
-//   instructorName: string;
-//   lessons: string;
-//   views: string;
-// }
 
 export const CourseColumns: ColumnDef<CourseDetailsType>[] = [
   {
@@ -104,78 +95,78 @@ export const CourseColumns: ColumnDef<CourseDetailsType>[] = [
   },
 ];
 
-// export const CourseColumnsSkeleton: ColumnDef<CourseDetailsType>[] = [
-//   {
-//     accessorKey: 'instructorImage',
-//     header: () => null,
-//     cell: () => {
-//       return <Skeleton className="size-11 rounded bg-[#DBDBDB]" />;
-//     },
-//   },
-//   {
-//     accessorKey: 'courseTitle',
-//     header: () => (
-//       <div className="flex items-center gap-1">
-//         <CourseIcon />
-//         <span className="text-[10px] font-semibold text-[#737373]">Title</span>
-//       </div>
-//     ),
-//     cell: () => {
-//       return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
-//     },
-//   },
-//   {
-//     accessorKey: 'instructorName',
-//     header: () => (
-//       <div className="flex items-center gap-1">
-//         <InstructorIcon />
-//         <span className="text-[10px] font-semibold text-[#737373]">
-//           Instructor
-//         </span>
-//       </div>
-//     ),
-//     cell: () => {
-//       return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
-//     },
-//   },
-//   {
-//     accessorKey: 'courseDuration',
-//     header: () => (
-//       <div className="flex items-center gap-1">
-//         <DurationIcon />
-//         <span className="text-[10px] font-semibold text-[#737373]">
-//           Duration
-//         </span>
-//       </div>
-//     ),
-//     cell: () => {
-//       return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
-//     },
-//   },
-//   {
-//     accessorKey: 'lessons',
-//     header: () => (
-//       <div className="flex items-center gap-1">
-//         <LessonsIcon />
-//         <span className="text-[10px] font-semibold text-[#737373]">
-//           Lessons
-//         </span>
-//       </div>
-//     ),
-//     cell: () => {
-//       return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
-//     },
-//   },
-//   {
-//     accessorKey: 'views',
-//     header: () => (
-//       <div className="flex items-center gap-1">
-//         <ViewsIcon />
-//         <span className="text-[10px] font-semibold text-[#737373]">Views</span>
-//       </div>
-//     ),
-//     cell: () => {
-//       return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
-//     },
-//   },
-// ];
+export const CourseColumnsSkeleton: ColumnDef<CourseDetailsType>[] = [
+  {
+    accessorKey: 'instructorImage',
+    header: () => null,
+    cell: () => {
+      return <Skeleton className="size-11 rounded bg-[#DBDBDB]" />;
+    },
+  },
+  {
+    accessorKey: 'courseTitle',
+    header: () => (
+      <div className="flex items-center gap-1">
+        <CourseIcon />
+        <span className="text-[10px] font-semibold text-[#737373]">Title</span>
+      </div>
+    ),
+    cell: () => {
+      return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
+    },
+  },
+  {
+    accessorKey: 'instructorName',
+    header: () => (
+      <div className="flex items-center gap-1">
+        <InstructorIcon />
+        <span className="text-[10px] font-semibold text-[#737373]">
+          Instructor
+        </span>
+      </div>
+    ),
+    cell: () => {
+      return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
+    },
+  },
+  {
+    accessorKey: 'courseDuration',
+    header: () => (
+      <div className="flex items-center gap-1">
+        <DurationIcon />
+        <span className="text-[10px] font-semibold text-[#737373]">
+          Duration
+        </span>
+      </div>
+    ),
+    cell: () => {
+      return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
+    },
+  },
+  {
+    accessorKey: 'lessons',
+    header: () => (
+      <div className="flex items-center gap-1">
+        <LessonsIcon />
+        <span className="text-[10px] font-semibold text-[#737373]">
+          Lessons
+        </span>
+      </div>
+    ),
+    cell: () => {
+      return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
+    },
+  },
+  {
+    accessorKey: 'views',
+    header: () => (
+      <div className="flex items-center gap-1">
+        <ViewsIcon />
+        <span className="text-[10px] font-semibold text-[#737373]">Views</span>
+      </div>
+    ),
+    cell: () => {
+      return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
+    },
+  },
+];

@@ -8,12 +8,19 @@ import Insights from './insights';
 import Earnings from './earnings';
 import Sessions from './sessions';
 import Settings from './settings';
+import ErrorPage from './ErrorPage';
+import Login from './auth/login';
+import { checkAuthLoader } from './lib/utils';
+import ResetPassword from './auth/reset-password';
+import VerifyEmail from './auth/verify';
+import AuthLayout from './auth/root-layout';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
-    // loader: checkAuthLoader,
+    errorElement: <ErrorPage />,
+    loader: checkAuthLoader,
     children: [
       {
         path: '/',
@@ -41,10 +48,21 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // {
-  //   path: "/auth/login",
-  //   element: <Login />,
-  // },
+  {
+    path: '/auth',
+    element: <AuthLayout />,
+    children: [
+      {
+        path: '/auth/login',
+        element: <Login />,
+      },
+      { path: '/auth/verify', element: <VerifyEmail /> },
+      {
+        path: '/auth/reset-password',
+        element: <ResetPassword />,
+      },
+    ],
+  },
 ]);
 
 function App() {

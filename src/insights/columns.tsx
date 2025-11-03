@@ -1,7 +1,8 @@
 import StarIcon from '@/assets/jsx-icons/star';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { ColumnDef } from '@tanstack/react-table';
 
-type InsightsType = {
+export type InsightsType = {
   name: string;
   courseTitle: string;
   rating: string;
@@ -41,5 +42,36 @@ export const InsightColumns: ColumnDef<InsightsType>[] = [
   {
     accessorKey: 'time',
     header: 'Time',
+  },
+];
+
+export const InsightColumnsSkeleton: ColumnDef<InsightsType>[] = [
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    cell: () => {
+      return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
+    },
+  },
+  {
+    accessorKey: 'courseTitle',
+    header: 'Course Title',
+    cell: () => {
+      return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
+    },
+  },
+  {
+    accessorKey: 'rating',
+    header: 'Rating',
+    cell: () => {
+      return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
+    },
+  },
+  {
+    accessorKey: 'time',
+    header: 'Time',
+    cell: () => {
+      return <Skeleton className="h-4 w-16 rounded bg-[#DBDBDB]" />;
+    },
   },
 ];

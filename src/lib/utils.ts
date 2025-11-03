@@ -1,6 +1,18 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from 'clsx';
+import Cookies from 'js-cookie';
+import { redirect } from 'react-router';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
+
+export const checkAuthLoader = () => {
+  const token = Cookies.get('rf');
+
+  if (!token) {
+    return redirect('/auth/login');
+  }
+
+  return { isAuthenticated: true };
+};
