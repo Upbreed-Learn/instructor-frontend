@@ -378,13 +378,13 @@ const Settings = () => {
                         <FieldError errors={field.state.meta.errors} />
                       )}
                       <FieldDescription className="text-xs/[100%] font-semibold text-black">
-                        Enter your email and {`we’ll`} send you a link to reset
+                        Enter your email and {`we’ll`} send you a code to reset
                         your password
                       </FieldDescription>
                       <ConfirmationDialog email={field.state.value}>
                         <span className="cursor-pointer text-end text-xs/[100%] text-[#7893EC] underline">
-                          Send link to email
-                          <span className="sr-only">Send link to email</span>
+                          Send code to email
+                          <span className="sr-only">Send code to email</span>
                         </span>
                       </ConfirmationDialog>
                     </Field>
