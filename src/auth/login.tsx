@@ -90,7 +90,7 @@ const Login = () => {
         </p>
       </div>
       <form
-        id="settings-form"
+        id="login"
         onSubmit={e => {
           e.preventDefault();
           form.handleSubmit();
@@ -164,7 +164,7 @@ const Login = () => {
         </FieldGroup>
         <Link
           to={'/auth/reset-password'}
-          className="text-xs/[100%] font-semibold text-[#00230F] underline"
+          className="w-max text-xs/[100%] font-semibold text-[#00230F] underline"
         >
           Reset Password
         </Link>

@@ -7,7 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '../pagination';
-// import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 const PaginationSection = (props: {
   currentPage: number;
@@ -15,6 +15,18 @@ const PaginationSection = (props: {
   setCurrentPage: Dispatch<SetStateAction<number>>;
 }) => {
   const { currentPage, totalPages = 10, setCurrentPage } = props;
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -47,7 +59,13 @@ const PaginationSection = (props: {
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href="#" />
+          <PaginationPrevious
+            onClick={handlePreviousPage}
+            className={cn(
+              'cursor-pointer',
+              currentPage === 1 && 'cursor-not-allowed opacity-50',
+            )}
+          />
         </PaginationItem>
         <span className="flex items-center gap-2 md:gap-4">
           {pageNumbers.map((page, index) => {
@@ -61,11 +79,6 @@ const PaginationSection = (props: {
                     handlePageChange(page as number);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  //   className={cn(
-                  //     'h-[2.125rem] w-[2.375rem] rounded-lg border-none text-sm leading-[100%] font-medium text-[#535862] hover:bg-[#151515] hover:text-[#FAFAFF] md:size-12 md:text-lg',
-                  //     currentPage === page &&
-                  //       'border-none text-[#FAFAFF] md:bg-[#151515]',
-                  //   )}
                 >
                   {page}
                 </PaginationLink>
@@ -73,14 +86,14 @@ const PaginationSection = (props: {
             );
           })}
         </span>
-        {/* <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
-        </PaginationItem>
         <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem> */}
-        <PaginationItem>
-          <PaginationNext href="#" />
+          <PaginationNext
+            onClick={handleNextPage}
+            className={cn(
+              'cursor-pointer',
+              currentPage === totalPages && 'cursor-not-allowed opacity-50',
+            )}
+          />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

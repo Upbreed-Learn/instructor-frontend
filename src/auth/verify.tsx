@@ -151,7 +151,7 @@ const VerifyEmail = () => {
         </p>
       </div>
       <form
-        id="settings-form"
+        id="reset-password"
         onSubmit={e => {
           e.preventDefault();
           form.handleSubmit();

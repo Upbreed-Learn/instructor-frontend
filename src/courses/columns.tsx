@@ -6,6 +6,7 @@ import ViewsIcon from '@/assets/jsx-icons/views-icon';
 import AvatarCustom from '@/components/ui/custom/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { CourseDetailsType } from '@/lib/constants';
+import { formatToHMS } from '@/lib/utils';
 import type { ColumnDef } from '@tanstack/react-table';
 
 export const CourseColumns: ColumnDef<CourseDetailsType>[] = [
@@ -62,6 +63,14 @@ export const CourseColumns: ColumnDef<CourseDetailsType>[] = [
         </span>
       </div>
     ),
+    cell: ({ row }) => {
+      const data = row.original;
+      return (
+        <p className="text-[10px] font-semibold">
+          {formatToHMS(data.preview.durationInMinutes)}
+        </p>
+      );
+    },
   },
   {
     accessorKey: 'preview.lessonCount',
