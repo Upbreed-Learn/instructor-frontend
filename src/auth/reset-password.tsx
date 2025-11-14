@@ -67,7 +67,7 @@ const ResetPassword = () => {
         </p>
       </div>
       <form
-        id="settings-form"
+        id="request-verification-code"
         onSubmit={e => {
           e.preventDefault();
           form.handleSubmit();

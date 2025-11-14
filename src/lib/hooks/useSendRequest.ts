@@ -23,14 +23,13 @@ const useSendRequest = <T, R>({
   cookie,
   onSuccessCallback,
 }: UsePostRequestProps<T, R>) => {
-  const oneHourFromNow = new Date(new Date().getTime() + 60 * 60 * 1000);
   const { mutate, isPending, isSuccess } = useMutation({
     mutationFn,
     onSuccess: data => {
       if (cookie) {
         const cookieValue = cookie.getValue(data);
         if (cookieValue) {
-          Cookies.set(cookie.name, cookieValue, { expires: oneHourFromNow });
+          Cookies.set(cookie.name, cookieValue);
         }
       }
       if (successToast)

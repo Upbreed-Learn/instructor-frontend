@@ -11,6 +11,7 @@ import {
 import useSendRequest from '@/lib/hooks/useSendRequest';
 import { MUTATIONS } from '@/queries';
 import { useUserEmailStore } from '@/store/user-email-control';
+import Cookies from 'js-cookie';
 import { type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -41,8 +42,8 @@ const ConfirmationDialog = (props: { children: ReactNode; email: string }) => {
       description: 'OTP sent successfully!',
     },
     onSuccessCallback: () => {
+      Cookies.remove('rf');
       navigate('/auth/verify');
-      //   setRedirecting(true);
       setUserEmail(email);
     },
   });
