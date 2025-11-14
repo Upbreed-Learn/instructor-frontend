@@ -2,7 +2,7 @@ import AvatarCustom from '@/components/ui/custom/avatar';
 import { cn } from '@/lib/utils';
 import { useUserIdStore } from '@/store/user-id-control';
 import Cookies from 'js-cookie';
-import { Menu } from 'lucide-react';
+// import { Menu } from 'lucide-react';
 import { useLocation } from 'react-router';
 import { jwtDecode } from 'jwt-decode';
 import { useEffect } from 'react';
@@ -41,7 +41,7 @@ const Navbar = () => {
           <p className={cn('text-xs/[100%] font-bold text-red-500')}>
             Error loading user data
           </p>
-          <Menu size={24} className="text-gray-400" />
+          {/* <Menu size={24} className="text-gray-400" /> */}
           <AvatarCustom
             src=""
             alt="error"
@@ -54,7 +54,7 @@ const Navbar = () => {
           <p className={cn('text-xs/[100%] font-bold text-[#737373]')}>
             Hello, {userDetails.fname} {userDetails.lname}
           </p>
-          <Menu size={24} />
+          {/* <Menu size={24} /> */}
           <AvatarCustom
             src={userDetails.instructorProfile.profilePictureUrl}
             alt="avatar"
