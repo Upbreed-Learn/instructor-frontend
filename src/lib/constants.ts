@@ -67,3 +67,12 @@ export interface DashboardDetailsType {
     completed: number;
   };
 }
+
+export interface InstructorType {
+  fname: string;
+  lname: string;
+  profilePicture: File;
+  accountNo: string;
+  bank: string;
+  accountName: string;
+}

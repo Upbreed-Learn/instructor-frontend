@@ -1,3 +1,4 @@
+import type { InstructorType } from '@/lib/constants';
 import { https } from '@/lib/https';
 
 export const MUTATIONS = {
@@ -20,6 +21,16 @@ export const MUTATIONS = {
     otp: string;
   }) {
     return await https.post(`/auth/password/reset`, data);
+  },
+  editInstructor: async function (
+    id: number,
+    data: Omit<InstructorType, 'id' | 'createdAt' | 'email'>,
+  ) {
+    return await https.patch(`/instructor/${id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 };
 
