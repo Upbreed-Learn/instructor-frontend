@@ -41,13 +41,19 @@ const Login = () => {
   };
 
   const { mutate, isPending } = useSendRequest<
-    { email: string; password: string; deviceSignature: string },
+    {
+      email: string;
+      password: string;
+      deviceSignature: string;
+      userType: 'INSTRUCTOR';
+    },
     { data: { token: string } }
   >({
     mutationFn: (data: {
       email: string;
       password: string;
       deviceSignature: string;
+      userType: 'INSTRUCTOR';
     }) => MUTATIONS.authLogin(data),
     errorToast: {
       title: 'Error',
@@ -75,6 +81,7 @@ const Login = () => {
         email: value.email,
         password: value.password,
         deviceSignature: deviceFingerprint!!,
+        userType: 'INSTRUCTOR',
       });
     },
   });

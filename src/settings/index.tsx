@@ -74,9 +74,9 @@ const Settings = () => {
       image: userDetails?.instructorProfile.profilePictureUrl,
       firstName: userDetails?.fname,
       lastName: userDetails?.lname,
-      accountName: '',
-      accountNumber: '',
-      bankName: '',
+      accountName: userDetails?.instructorProfile.accountName ?? '',
+      accountNumber: userDetails?.instructorProfile.accountNo ?? '',
+      bankName: userDetails?.instructorProfile.bank ?? '',
       email: userDetails?.email,
     } as UserFormValues,
     validators: {

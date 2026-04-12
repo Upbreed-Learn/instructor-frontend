@@ -41,6 +41,9 @@ export interface UserDetailsType {
     profilePictureUrl: string;
     expertise: string;
     title: string;
+    accountNo: string;
+    bank: string;
+    accountName: string;
   };
 }
 export interface DecodedTokenType {
