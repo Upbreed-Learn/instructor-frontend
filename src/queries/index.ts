@@ -5,9 +5,8 @@ export const MUTATIONS = {
     email: string;
     password: string;
     deviceSignature: string;
-    userType: 'INSTRUCTOR';
   }) {
-    return await https.post(`/auth/login`, data);
+    return await https.post(`/auth/login?userType=INSTRUCTOR`, data);
   },
   requestOTP: async function (data: {
     email: string;
