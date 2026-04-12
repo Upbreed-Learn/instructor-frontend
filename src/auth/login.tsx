@@ -45,7 +45,6 @@ const Login = () => {
       email: string;
       password: string;
       deviceSignature: string;
-      userType: 'INSTRUCTOR';
     },
     { data: { token: string } }
   >({
@@ -53,7 +52,6 @@ const Login = () => {
       email: string;
       password: string;
       deviceSignature: string;
-      userType: 'INSTRUCTOR';
     }) => MUTATIONS.authLogin(data),
     errorToast: {
       title: 'Error',
@@ -81,7 +79,6 @@ const Login = () => {
         email: value.email,
         password: value.password,
         deviceSignature: deviceFingerprint!!,
-        userType: 'INSTRUCTOR',
       });
     },
   });
