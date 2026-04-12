@@ -16,12 +16,14 @@ import ImageUploadIcon from '@/assets/jsx-icons/image-upload-icon';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router';
 import { useUserIdStore } from '@/store/user-id-control';
-import type { UserDetailsType } from '@/lib/constants';
+import type { InstructorType, UserDetailsType } from '@/lib/constants';
 import { useGetUserDetails } from '@/queries/hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import ErrorState from '@/components/error';
 import { useQueryClient } from '@tanstack/react-query';
 import ConfirmationDialog from './confirmation-dialog';
+import useSendRequest from '@/lib/hooks/useSendRequest';
+import { MUTATIONS } from '@/queries';
 
 const formSchema = z.object({
   image: z
@@ -69,6 +71,27 @@ const Settings = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
+  const { mutate: editMutate, isPending: isEditPending } = useSendRequest<
+    InstructorType,
+    any
+  >({
+    mutationFn: (data: InstructorType) =>
+      MUTATIONS.editInstructor(Number(userId!!), data),
+    errorToast: {
+      title: 'Error',
+      description: 'Failed to update instructor',
+    },
+    successToast: {
+      title: 'Success',
+      description: 'Instructor updated successfully',
+    },
+    onSuccessCallback: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['userDetails'],
+      });
+    },
+  });
+
   const form = useForm({
     defaultValues: {
       image: userDetails?.instructorProfile.profilePictureUrl,
@@ -83,7 +106,14 @@ const Settings = () => {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      editMutate({
+        fname: value.firstName,
+        lname: value.lastName,
+        profilePicture: value.image,
+        accountName: value.accountName,
+        accountNo: value.accountNumber,
+        bank: value.bankName,
+      });
       //   toast('You submitted the following values:', {
       //     description: (
       //       <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
@@ -281,7 +311,7 @@ const Settings = () => {
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
-                        disabled
+                        // disabled
                         onChange={e => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
                         placeholder="Account Name"
@@ -307,7 +337,7 @@ const Settings = () => {
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
-                        disabled
+                        // disabled
                         onChange={e => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
                         placeholder="Account Number"
@@ -335,7 +365,7 @@ const Settings = () => {
                         onBlur={field.handleBlur}
                         onChange={e => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
-                        disabled
+                        // disabled
                         placeholder="Bank Name"
                         autoComplete="off"
                         className="h-9 rounded-lg border-transparent bg-[#D9D9D980] placeholder:text-[#9B9B9B]"
@@ -396,7 +426,12 @@ const Settings = () => {
               />
             </FieldSet>
           </FieldGroup>
-          <Button className="w-max self-end">Save</Button>
+          <Button
+            disabled={isEditPending}
+            className="w-max self-end disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isEditPending ? 'Saving...' : 'Save'}
+          </Button>
         </form>
       )}
     </div>
