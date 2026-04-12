@@ -5,6 +5,7 @@ export const MUTATIONS = {
     email: string;
     password: string;
     deviceSignature: string;
+    userType: 'INSTRUCTOR';
   }) {
     return await https.post(`/auth/login`, data);
   },

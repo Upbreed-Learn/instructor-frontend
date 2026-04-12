@@ -74,9 +74,9 @@ const Settings = () => {
       image: userDetails?.instructorProfile.profilePictureUrl,
       firstName: userDetails?.fname,
       lastName: userDetails?.lname,
-      accountName: '',
-      accountNumber: '',
-      bankName: '',
+      accountName: userDetails?.instructorProfile.accountName ?? '',
+      accountNumber: userDetails?.instructorProfile.accountNo ?? '',
+      bankName: userDetails?.instructorProfile.bank ?? '',
       email: userDetails?.email,
     } as UserFormValues,
     validators: {
@@ -281,6 +281,7 @@ const Settings = () => {
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
+                        disabled
                         onChange={e => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
                         placeholder="Account Name"
@@ -306,6 +307,7 @@ const Settings = () => {
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
+                        disabled
                         onChange={e => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
                         placeholder="Account Number"
@@ -333,6 +335,7 @@ const Settings = () => {
                         onBlur={field.handleBlur}
                         onChange={e => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
+                        disabled
                         placeholder="Bank Name"
                         autoComplete="off"
                         className="h-9 rounded-lg border-transparent bg-[#D9D9D980] placeholder:text-[#9B9B9B]"
