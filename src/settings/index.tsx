@@ -281,6 +281,7 @@ const Settings = () => {
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
+                        disabled
                         onChange={e => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
                         placeholder="Account Name"
@@ -306,6 +307,7 @@ const Settings = () => {
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
+                        disabled
                         onChange={e => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
                         placeholder="Account Number"
@@ -333,6 +335,7 @@ const Settings = () => {
                         onBlur={field.handleBlur}
                         onChange={e => field.handleChange(e.target.value)}
                         aria-invalid={isInvalid}
+                        disabled
                         placeholder="Bank Name"
                         autoComplete="off"
                         className="h-9 rounded-lg border-transparent bg-[#D9D9D980] placeholder:text-[#9B9B9B]"
