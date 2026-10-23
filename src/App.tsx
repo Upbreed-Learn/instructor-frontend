@@ -12,6 +12,7 @@ import ErrorPage from './ErrorPage';
 import Login from './auth/login';
 import { checkAuthLoader } from './lib/utils';
 import ResetPassword from './auth/reset-password';
+import SetPassword from './auth/set-password';
 import VerifyEmail from './auth/verify';
 import AuthLayout from './auth/root-layout';
 
@@ -61,6 +62,7 @@ const router = createBrowserRouter([
         path: '/auth/reset-password',
         element: <ResetPassword />,
       },
+      { path: '/auth/set-password', element: <SetPassword /> },
     ],
   },
 ]);
