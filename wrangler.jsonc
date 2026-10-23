@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "upbreed-instructor",
+  "compatibility_date": "2026-10-01",
+  // Static single-page app: Cloudflare serves the built files; unknown paths fall back to index.html.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
