@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { QUERIES } from '@/queries';
 import { useUserIdStore } from '@/store/user-id-control';
 import type { DashboardDetailsType } from '@/lib/constants';
+import { money } from '@/lib/earnings';
 
 const useGetDashboardDetails = (id: string) => {
   return useQuery({
@@ -60,7 +61,7 @@ const Overview = () => {
                 />
                 <SummaryCard
                   title="Total Earnings"
-                  value={`${dashboardDetails.earnings.totalEarning}`}
+                  value={money(dashboardDetails.earningsByCurrency?.[currency]?.totalEarning ?? 0, currency)}
                 />
                 <SummaryCard
                   title="Active Courses"

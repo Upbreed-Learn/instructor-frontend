@@ -1,5 +1,6 @@
 import RevenueChart from '@/components/charts/revenue';
 import { cn } from '@/lib/utils';
+import { useEarnings } from '@/lib/earnings';
 interface DataPoint {
   month: string;
   usd: number;
@@ -11,20 +12,13 @@ export default function TotalRevenueChart(props: {
   className?: string;
 }) {
   const { height = 120, className } = props;
-  const data: DataPoint[] = [
-    { month: 'Jan', usd: 25000, naira: 72000 },
-    { month: 'Feb', usd: 35000, naira: 110000 },
-    { month: 'Mar', usd: 32000, naira: 22000 },
-    { month: 'Apr', usd: 28000, naira: 48000 },
-    { month: 'May', usd: 38000, naira: 180000 },
-    { month: 'Jun', usd: 430567, naira: 52000 },
-    { month: 'Jul', usd: 42000, naira: 130000 },
-    { month: 'Aug', usd: 35000, naira: 210000 },
-    { month: 'Sept', usd: 48000, naira: 35000 },
-    { month: 'Oct', usd: 52000, naira: 45657 },
-    { month: 'Nov', usd: 50000, naira: 250000 },
-    { month: 'Des', usd: 55000, naira: 270000 },
-  ];
+  // Your 1-1 session earnings for the last 12 months (dollars and naira).
+  const { data: earnings } = useEarnings();
+  const data: DataPoint[] = (earnings?.history ?? []).map(h => ({
+    month: new Date(`${h.month}-01T00:00:00Z`).toLocaleString(undefined, { month: 'short' }),
+    usd: Number(h.USD ?? 0),
+    naira: Number(h.NGN ?? 0),
+  }));
 
   return (
     <div
@@ -36,7 +30,7 @@ export default function TotalRevenueChart(props: {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-sm/[100%] font-bold text-[#464255]">
-          Total Revenue
+          Your Earnings
         </h2>
         <div className="flex gap-1.5">
           <div className="flex items-center gap-1">

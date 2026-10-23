@@ -62,6 +62,7 @@ export interface DashboardDetailsType {
     totalEarning: number;
     pendingPayout: number;
   };
+  earningsByCurrency?: Record<string, { totalEarning: number; monthlyEarning: number; paidOut: number; pendingPayout: number }>;
   oneOnOneSessions: {
     pending: number;
     completed: number;
