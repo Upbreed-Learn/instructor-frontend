@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { https } from '@/lib/https';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import Cookies from 'js-cookie';
 import { Eye, EyeOff, LoaderPinwheelIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
@@ -26,11 +28,26 @@ const SetPassword = () => {
   const [show, setShow] = useState(false);
   const ok = RULES.every(([r]) => r.test(password)) && password === confirm;
 
+  // Same device id the login page uses, so this counts as a normal sign-in.
+  const { data: deviceSignature } = useQuery({
+    queryKey: ['deviceFingerprint'],
+    queryFn: async () => (await (await FingerprintJS.load()).get()).visitorId,
+    staleTime: Infinity,
+  });
   const save = useMutation({
-    mutationFn: () => https.post('/auth/password/set', { email, token, password }),
-    onSuccess: () => {
-      toast.success('Password set', { description: 'You can now log in.' });
-      navigate('/auth/login');
+    mutationFn: () =>
+      https
+        .post('/auth/password/set', { email, token, password, deviceSignature, userType: 'INSTRUCTOR' })
+        .then(r => r.data as { token?: string }),
+    onSuccess: data => {
+      if (data.token) {
+        Cookies.set('rf', data.token);
+        toast.success('Welcome to Upbreed Learn!');
+        navigate('/');
+      } else {
+        toast.success('Password set', { description: 'You can now log in.' });
+        navigate('/auth/login');
+      }
     },
     onError: (e: any) => toast.error('Could not set password', { description: e?.response?.data?.message ?? 'Please try again.' }),
   });
