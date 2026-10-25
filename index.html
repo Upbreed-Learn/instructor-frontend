@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>upbreed | Instructor</title>
       <!-- FIT_TO_DESIGN: designs are 1280px wide; on 1024–1279px screens scale the app down to match. -->
-    <script>(function(){var d=document.documentElement;function f(){var w=window.innerWidth;var z=w>=1024?Math.min(1,w/1280):1;d.style.zoom=z===1?'':String(z);}f();window.addEventListener('resize',f);})();</script>
+    <script>(function(){var d=document.documentElement;function f(){var w=window.innerWidth;var z=w>=1024?Math.min(1,w/1280):1;d.style.zoom=z===1?'':String(z);d.style.setProperty('--site-zoom',String(z));}f();window.addEventListener('resize',f);})();</script>
   </head>
   <body>
     <div id="root"></div>

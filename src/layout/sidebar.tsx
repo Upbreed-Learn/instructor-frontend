@@ -38,7 +38,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   return (
-    <aside className="hide-scrollbar fixed flex h-screen w-max flex-col gap-16 overflow-auto bg-[#305B43] px-11 pt-16">
+    <aside className="hide-scrollbar fixed flex h-[calc(100vh/var(--site-zoom,1))] w-max flex-col gap-16 overflow-auto bg-[#305B43] px-11 pt-16">
       <Link to={'/'} className="h-9 w-38.5">
         <img src={logo} alt="upbreed logo" className="size-full" />
       </Link>
