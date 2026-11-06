@@ -31,6 +31,11 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   error => {
+    // Signed out (token expired, or the account signed in somewhere else): back to the login page.
+    if (error.response?.status === 401 && Cookies.get('rf') && !window.location.pathname.startsWith('/auth')) {
+      Cookies.remove('rf');
+      window.location.assign('/auth/login?expired=1');
+    }
     // Debug logging for error responses
     console.error('API Response Error:', {
       status: error.response?.status,

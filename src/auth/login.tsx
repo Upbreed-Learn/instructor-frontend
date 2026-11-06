@@ -93,6 +93,11 @@ const Login = () => {
           Login to Continue
         </p>
       </div>
+{new URLSearchParams(window.location.search).get('expired') && (
+  <p className="rounded-md bg-[#FFF4E5] px-3 py-2 text-[11px] text-[#8A5300]">
+    You were signed out. Please log in again.
+  </p>
+)}
       <form
         id="login"
         onSubmit={e => {
