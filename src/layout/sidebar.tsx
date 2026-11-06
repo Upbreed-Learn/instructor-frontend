@@ -9,6 +9,7 @@ import UsersMore from '@/assets/jsx-icons/users-more';
 import Logout from '@/assets/jsx-icons/logout';
 import { Eye } from 'lucide-react';
 import Settings from '@/assets/jsx-icons/settings';
+import TalkToUs from './talk-to-us';
 
 const ROUTES = [
   {
@@ -42,7 +43,7 @@ const Sidebar = () => {
       <Link to={'/'} className="h-9 w-38.5">
         <img src={logo} alt="upbreed logo" className="size-full" />
       </Link>
-      <div className="flex flex-col gap-30">
+      <div className="flex flex-col gap-12 pb-10">
         <div className="flex flex-col gap-4">
           {ROUTES.map(route => (
             <NavLink
@@ -154,6 +155,9 @@ const Sidebar = () => {
               {route.label}
             </NavLink>
           ))}
+        </div>
+        <div className="w-44">
+          <TalkToUs />
         </div>
         <div className="flex flex-col gap-4 px-6">
           <NavLink
