@@ -67,7 +67,7 @@ export const CourseColumns: ColumnDef<CourseDetailsType>[] = [
       const data = row.original;
       return (
         <p className="text-[10px] font-semibold">
-          {formatToHMS(data.preview.durationInMinutes)}
+          {formatToHMS(data.preview.durationInSeconds ?? data.preview.durationInMinutes * 60)}
         </p>
       );
     },

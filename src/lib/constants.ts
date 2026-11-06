@@ -16,6 +16,7 @@ export type CourseDetailsType = {
   preview: {
     lessonCount: number;
     durationInMinutes: number;
+    durationInSeconds?: number;
   };
   videos: {
     id: number;
