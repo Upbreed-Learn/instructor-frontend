@@ -12,13 +12,13 @@ const RootLayout = () => {
       <Toaster />
       <Sidebar />
       <main className="ml-[17rem] flex w-full justify-center">
-        <div className={cn('flex w-full flex-col', pathname === '/' ? 'max-w-[78rem] px-8' : 'max-w-240')}>
+        <div className={cn('flex w-full flex-col', pathname === '/' || pathname === '/earnings' ? 'max-w-[78rem] px-8' : 'max-w-240')}>
           {/* The overview carries its own header (name, photo, period); the navbar still loads who is signed in. */}
-          <div className={cn(pathname === '/' && 'hidden')}>
+          <div className={cn((pathname === '/' || pathname === '/earnings') && 'hidden')}>
             <Navbar />
           </div>
           <div
-            className={cn(pathname === '/' ? '' : !pathname.includes('settings') ? 'mt-32' : 'pt-7')}
+            className={cn(pathname === '/' || pathname === '/earnings' ? '' : !pathname.includes('settings') ? 'mt-32' : 'pt-7')}
           >
             <Outlet />
           </div>
