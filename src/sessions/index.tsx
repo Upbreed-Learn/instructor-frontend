@@ -3,15 +3,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { https } from '@/lib/https';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, Trash } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ChevronLeft, ChevronRight, Plus, Trash } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import MoneyInput from '@/components/money-input';
 import { toast } from 'sonner';
 
 // ---------- Types ----------
 type Price = { region: string; currency: string; amount: number | string; provider?: 'PAYSTACK' | 'STRIPE' };
 type SessionType = { id: number; name: string; description: string | null; durationMinutes: number; isActive: boolean; allPrices: Price[] };
 type Rule = { weekday: number; start: string; end: string };
-type Availability = { timezone: string; rules: Rule[]; minNoticeHours: number; maxDaysAhead: number };
+type Availability = { timezone: string; rules: Rule[]; minNoticeHours: number; maxDaysAhead: number; blockedDates?: string[] };
 type Booking = {
   id: number;
   status: string;
@@ -26,6 +27,40 @@ type Booking = {
 };
 
 const CURRENCIES = ['NGN', 'GHS', 'KES', 'ZAR', 'USD', 'GBP', 'EUR', 'CAD'];
+/** Countries an instructor can set a local price for (and the currency students there pay in). */
+const COUNTRIES: [code: string, name: string, currency: string][] = [
+  ['NG', 'Nigeria', 'NGN'],
+  ['GH', 'Ghana', 'GHS'],
+  ['KE', 'Kenya', 'KES'],
+  ['ZA', 'South Africa', 'ZAR'],
+  ['GB', 'United Kingdom', 'GBP'],
+  ['US', 'United States', 'USD'],
+  ['CA', 'Canada', 'CAD'],
+  ['DE', 'Germany', 'EUR'],
+  ['FR', 'France', 'EUR'],
+  ['IE', 'Ireland', 'EUR'],
+  ['NL', 'Netherlands', 'EUR'],
+];
+
+/** Every time zone the browser knows, as "Africa/Lagos (GMT+1)", African zones first. */
+const timeZones = () => {
+  const all: string[] = (Intl as unknown as { supportedValuesOf?: (k: string) => string[] }).supportedValuesOf?.('timeZone') ?? ['Africa/Lagos', 'Africa/Accra', 'Africa/Nairobi', 'Africa/Johannesburg', 'Europe/London', 'America/New_York'];
+  const offset = (tz: string) => {
+    try {
+      return new Intl.DateTimeFormat('en', { timeZone: tz, timeZoneName: 'shortOffset' }).formatToParts(new Date()).find(p => p.type === 'timeZoneName')?.value ?? '';
+    } catch {
+      return '';
+    }
+  };
+  const groups = new Map<string, { tz: string; label: string }[]>();
+  for (const tz of all) {
+    const region = tz.includes('/') ? tz.split('/')[0] : 'Other';
+    const city = tz.split('/').slice(1).join(' / ').replace(/_/g, ' ') || tz;
+    if (!groups.has(region)) groups.set(region, []);
+    groups.get(region)!.push({ tz, label: `${city} (${offset(tz)})` });
+  }
+  return [...groups.entries()].sort(([a], [b]) => (a === 'Africa' ? -1 : b === 'Africa' ? 1 : a.localeCompare(b)));
+};
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const field = 'h-9 rounded-lg border border-[#D9D9D9] bg-white px-3 text-sm outline-none focus:border-[#305B43]';
 const errorMessage = (e: any) => {
@@ -53,7 +88,7 @@ const Sessions = () => (
       <TabsList className="self-start">
         <TabsTrigger value="bookings">Requests & bookings</TabsTrigger>
         <TabsTrigger value="types">My sessions & prices</TabsTrigger>
-        <TabsTrigger value="hours">Weekly hours</TabsTrigger>
+        <TabsTrigger value="hours">Weekly hours & days off</TabsTrigger>
       </TabsList>
       <TabsContent value="bookings">
         <Bookings />
@@ -293,30 +328,45 @@ function SessionTypes() {
             <textarea className={`${field} h-20 py-2`} value={editing.description ?? ''} onChange={e => setEditing({ ...editing, description: e.target.value })} />
           </label>
           <div className="flex flex-col gap-2">
-            <p className="text-xs text-[#737373]">Prices. Students see their own country's price; everyone else sees the DEFAULT price.</p>
+            <p className="text-xs text-[#737373]">Prices. Students see the price for their own country; everyone else sees the “Everyone else” price.</p>
             {editing.allPrices.map((p, i) => (
               <div key={i} className="flex gap-2">
-                <input
-                  className={`${field} w-28 uppercase`}
+                <select
+                  className={`${field} w-44`}
                   value={p.region}
                   disabled={i === 0}
-                  placeholder="GH"
-                  maxLength={7}
-                  onChange={e => setEditing({ ...editing, allPrices: editing.allPrices.map((x, j) => (j === i ? { ...x, region: e.target.value.toUpperCase() } : x)) })}
-                />
+                  required
+                  onChange={e => {
+                    const country = COUNTRIES.find(c => c[0] === e.target.value);
+                    setEditing({ ...editing, allPrices: editing.allPrices.map((x, j) => (j === i ? { ...x, region: e.target.value, currency: country?.[2] ?? x.currency } : x)) });
+                  }}
+                >
+                  {i === 0 ? (
+                    <option value="DEFAULT">Everyone else</option>
+                  ) : (
+                    <>
+                      <option value="">Choose a country</option>
+                      {COUNTRIES.map(([code, name]) => (
+                        <option key={code} value={code}>
+                          {name}
+                        </option>
+                      ))}
+                      {p.region && !COUNTRIES.some(c => c[0] === p.region) && <option value={p.region}>{p.region}</option>}
+                    </>
+                  )}
+                </select>
                 <select className={field} value={p.currency} onChange={e => setEditing({ ...editing, allPrices: editing.allPrices.map((x, j) => (j === i ? { ...x, currency: e.target.value } : x)) })}>
                   {CURRENCIES.map(c => (
                     <option key={c}>{c}</option>
                   ))}
                 </select>
-                <input
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  className={`${field} w-32`}
+                <MoneyInput
+                  className={`${field} w-36`}
                   value={p.amount}
                   required={i === 0}
-                  onChange={e => setEditing({ ...editing, allPrices: editing.allPrices.map((x, j) => (j === i ? { ...x, amount: e.target.value } : x)) })}
+                  placeholder="0"
+                  aria-label="Price"
+                  onValue={amount => setEditing({ ...editing, allPrices: editing.allPrices.map((x, j) => (j === i ? { ...x, amount } : x)) })}
                 />
                 {i > 0 && (
                   <button type="button" className="cursor-pointer" onClick={() => setEditing({ ...editing, allPrices: editing.allPrices.filter((_, j) => j !== i) })}>
@@ -367,17 +417,18 @@ function WeeklyHours() {
   const save = useMutation({
     mutationFn: (a: Availability) => https.put('/sessions/me/availability', a),
     onSuccess: () => {
-      toast.success('Weekly hours saved');
+      toast.success('Hours and days off saved');
       qc.invalidateQueries({ queryKey: ['my-availability'] });
     },
     onError: e => toast.error('Could not save', { description: errorMessage(e) }),
   });
+  const zones = useMemo(timeZones, []);
   if (!form) return <Skeleton className="h-48 w-full" />;
   const setRules = (rules: Rule[]) => setForm({ ...form, rules });
 
   return (
     <form
-      className="flex max-w-2xl flex-col gap-5 text-sm"
+      className="flex max-w-3xl flex-col gap-5 text-sm"
       onSubmit={e => {
         e.preventDefault();
         save.mutate(form);
@@ -385,7 +436,18 @@ function WeeklyHours() {
     >
       <label className="flex flex-col gap-1 text-xs text-[#737373]">
         Your time zone
-        <input className={field} value={form.timezone} onChange={e => setForm({ ...form, timezone: e.target.value })} placeholder="Africa/Lagos" />
+        <select className={`${field} max-w-md`} value={form.timezone} onChange={e => setForm({ ...form, timezone: e.target.value })}>
+          {!zones.some(([, list]) => list.some(z => z.tz === form.timezone)) && <option value={form.timezone}>{form.timezone}</option>}
+          {zones.map(([region, list]) => (
+            <optgroup key={region} label={region}>
+              {list.map(z => (
+                <option key={z.tz} value={z.tz}>
+                  {z.label}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
       </label>
       <div className="flex flex-col gap-2">
         {DAYS.map((day, weekday) => {
@@ -427,10 +489,120 @@ function WeeklyHours() {
           <input type="number" min={1} max={180} className={`${field} w-32`} value={form.maxDaysAhead} onChange={e => setForm({ ...form, maxDaysAhead: Number(e.target.value) })} />
         </label>
       </div>
+      <DaysOff
+        rules={form.rules}
+        maxDaysAhead={form.maxDaysAhead}
+        blocked={form.blockedDates ?? []}
+        onChange={blockedDates => setForm({ ...form, blockedDates })}
+      />
       <Button type="submit" className="self-start" disabled={save.isPending}>
-        {save.isPending ? 'Saving…' : 'Save weekly hours'}
+        {save.isPending ? 'Saving…' : 'Save hours & days off'}
       </Button>
     </form>
+  );
+}
+
+// ---------- Days off calendar ----------
+const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+/** A month calendar: green days are open (from the weekly hours), click one to take it off, click again to reopen it. */
+function DaysOff(props: { rules: Rule[]; maxDaysAhead: number; blocked: string[]; onChange: (dates: string[]) => void }) {
+  const { rules, maxDaysAhead, blocked, onChange } = props;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const [month, setMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+  const last = new Date(today.getTime() + maxDaysAhead * 86_400_000);
+  const openWeekdays = new Set(rules.map(r => r.weekday));
+  const first = new Date(month.getFullYear(), month.getMonth(), 1);
+  const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+  const cells: (Date | null)[] = [...Array(first.getDay()).fill(null), ...Array.from({ length: days }, (_, i) => new Date(month.getFullYear(), month.getMonth(), i + 1))];
+  const upcoming = blocked.filter(d => d >= ymd(today)).sort();
+  const toggle = (d: string) => onChange(blocked.includes(d) ? blocked.filter(x => x !== d) : [...blocked, d]);
+
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-[#E5E5E5] p-5">
+      <div>
+        <p className="font-semibold">Days off</p>
+        <p className="text-xs text-[#737373]">
+          Click a green day to block it (holidays, travel, busy days). Click it again to open it. Days without weekly hours stay closed.
+        </p>
+      </div>
+      <div className="flex flex-wrap gap-8">
+        <div className="w-80">
+          <div className="mb-2 flex items-center justify-between">
+            <button type="button" aria-label="Previous month" className="cursor-pointer rounded p-1 hover:bg-[#F4F4F4]" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}>
+              <ChevronLeft className="size-4" />
+            </button>
+            <p className="text-sm font-semibold">{month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</p>
+            <button type="button" aria-label="Next month" className="cursor-pointer rounded p-1 hover:bg-[#F4F4F4]" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}>
+              <ChevronRight className="size-4" />
+            </button>
+          </div>
+          <div className="grid grid-cols-7 gap-1 text-center text-xs">
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
+              <span key={i} className="py-1 font-semibold text-[#9B9B9B]">
+                {d}
+              </span>
+            ))}
+            {cells.map((d, i) => {
+              if (!d) return <span key={i} />;
+              const key = ymd(d);
+              const past = d < today || d > last;
+              const closed = !openWeekdays.has(d.getDay());
+              const off = blocked.includes(key);
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  disabled={past || closed}
+                  onClick={() => toggle(key)}
+                  title={past ? 'Outside your booking window' : closed ? 'No weekly hours on this day' : off ? 'Day off: click to open' : 'Open: click to block'}
+                  className={`h-9 rounded-md text-sm font-medium ${
+                    past
+                      ? 'text-[#D0D0D0]'
+                      : closed
+                        ? 'bg-[#F4F4F4] text-[#B5B5B5]'
+                        : off
+                          ? 'cursor-pointer bg-[#FDE8E8] text-[#C0392B] line-through'
+                          : 'cursor-pointer bg-[#E8F0E4] text-[#305B43] hover:bg-[#D0EA50]'
+                  }`}
+                >
+                  {d.getDate()}
+                </button>
+              );
+            })}
+          </div>
+          <div className="mt-3 flex flex-wrap gap-3 text-[11px] text-[#737373]">
+            <span className="flex items-center gap-1">
+              <i className="size-3 rounded bg-[#E8F0E4]" /> Open
+            </span>
+            <span className="flex items-center gap-1">
+              <i className="size-3 rounded bg-[#FDE8E8]" /> Day off
+            </span>
+            <span className="flex items-center gap-1">
+              <i className="size-3 rounded bg-[#F4F4F4]" /> No weekly hours
+            </span>
+          </div>
+        </div>
+        <div className="min-w-48 flex-1">
+          <p className="mb-2 text-xs font-semibold text-[#737373]">Upcoming days off</p>
+          {!upcoming.length ? (
+            <p className="text-xs text-[#9B9B9B]">None. You're open on all your usual days.</p>
+          ) : (
+            <ul className="flex flex-col gap-1.5">
+              {upcoming.map(d => (
+                <li key={d} className="flex items-center justify-between rounded-lg bg-[#F8F8F8] px-3 py-1.5 text-xs">
+                  {new Date(`${d}T12:00:00`).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                  <button type="button" className="cursor-pointer font-semibold text-[#305B43]" onClick={() => toggle(d)}>
+                    Reopen
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

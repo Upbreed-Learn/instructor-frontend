@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { useQueryState } from 'nuqs';
 import TotalRevenueChart from '@/overview/total-revenue';
-import { money, useEarnings } from '@/lib/earnings';
+import { fullMoney, money, useEarnings } from '@/lib/earnings';
+import { https } from '@/lib/https';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -18,6 +21,18 @@ const Earnings = () => {
   const [currency, setCurrency] = useQueryState('currency', { defaultValue: 'NGN' });
   const cur = currencies.includes(currency) ? currency : currencies[0];
   const e = data?.byCurrency[cur] ?? { totalEarning: 0, monthlyEarning: 0, paidOut: 0, pendingPayout: 0 };
+  const queryClient = useQueryClient();
+  const minimum = cur === 'NGN' ? 100_000 : 100;
+  const status = data?.payoutStatus?.[cur] ?? { minimum, owed: e.pendingPayout, canRequest: false, requestedAt: null, requestedAmount: null };
+  const progress = Math.min(100, Math.round((status.owed / status.minimum) * 100));
+  const request = useMutation({
+    mutationFn: () => https.post('/instructor/me/payout-request', { currency: cur }).then(r => r.data.message as string),
+    onSuccess: message => {
+      toast.success('Payout requested', { description: message });
+      queryClient.invalidateQueries({ queryKey: ['earnings'] });
+    },
+    onError: (err: any) => toast.error('Could not request a payout', { description: err?.response?.data?.message || err?.message }),
+  });
 
   return (
     <div className="flex flex-col gap-3 pt-6">
@@ -63,6 +78,40 @@ const Earnings = () => {
           ))}
         </div>
       )}
+      {/* Request a payout: locked (greyed out) until the balance reaches the minimum. */}
+      <div
+        className={`flex flex-wrap items-center justify-between gap-5 rounded-xl border p-5 ${
+          status.canRequest || status.requestedAt ? 'border-[#C7DABF] bg-[#F3F8F0]' : 'border-[#E5E5E5] bg-[#FAFAFA]'
+        }`}
+      >
+        <div className="flex min-w-64 flex-1 flex-col gap-2">
+          <p className={`text-sm font-bold ${status.canRequest || status.requestedAt ? 'text-[#00230F]' : 'text-[#9B9B9B]'}`}>
+            {status.requestedAt ? 'Payout requested' : status.canRequest ? 'Your payout is ready' : 'Payout not available yet'}
+          </p>
+          <p className="text-xs text-[#737373]">
+            {status.requestedAt
+              ? `You asked for ${fullMoney(status.requestedAmount ?? status.owed, cur)} on ${new Date(status.requestedAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}. We'll send it to your bank account and email you.`
+              : status.canRequest
+                ? `You can request ${fullMoney(status.owed, cur)} now.`
+                : `Payouts open when your balance reaches ${fullMoney(status.minimum, cur)} (₦100,000 or $100). You have ${fullMoney(status.owed, cur)} so far.`}
+          </p>
+          {!status.requestedAt && (
+            <div className="flex items-center gap-3">
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#E5E5E5]">
+                <div className={`h-full rounded-full ${status.canRequest ? 'bg-[#34A853]' : 'bg-[#BDBDBD]'}`} style={{ width: `${progress}%` }} />
+              </div>
+              <span className="text-xs font-semibold text-[#737373] tabular-nums">{progress}%</span>
+            </div>
+          )}
+        </div>
+        <Button
+          disabled={!status.canRequest || request.isPending}
+          onClick={() => request.mutate()}
+          className="disabled:bg-[#E0E0E0] disabled:text-[#9B9B9B] disabled:opacity-100"
+        >
+          {request.isPending ? 'Requesting…' : status.requestedAt ? 'Requested' : 'Request payout'}
+        </Button>
+      </div>
       <TotalRevenueChart height={180} className="flex-2/3" />
       <div className="flex flex-col gap-2 rounded-lg p-4 shadow-[0px_2.03px_2.03px_0px_#0000000A]">
         <p className="text-sm font-bold">Payout history</p>
