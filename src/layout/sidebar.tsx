@@ -39,7 +39,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   return (
-    <aside className="hide-scrollbar fixed flex h-[calc(100vh/var(--site-zoom,1))] w-max flex-col gap-16 overflow-auto bg-[#305B43] px-11 pt-16">
+    <aside className="hide-scrollbar fixed flex h-[calc(100vh/var(--site-zoom,1))] w-[17rem] flex-col gap-16 overflow-auto bg-[#305B43] px-6 pt-16">
       <Link to={'/'} className="h-9 w-38.5">
         <img src={logo} alt="upbreed logo" className="size-full" />
       </Link>
@@ -51,8 +51,8 @@ const Sidebar = () => {
               to={route.path}
               className={({ isActive }) =>
                 cn(
-                  'group flex items-center gap-4 rounded-lg px-6 py-2 text-xs/[100%] font-semibold transition-colors hover:bg-white hover:text-[#737373]',
-                  isActive ? 'bg-white text-[#737373]' : 'bg-none text-white',
+                  'group flex items-center gap-4 rounded-lg px-6 py-2.5 text-sm/[100%] font-semibold transition-colors hover:bg-white/15 hover:text-white',
+                  isActive ? 'bg-[#D0EA50] text-[#00230F] hover:bg-[#D0EA50] hover:text-[#00230F]' : 'bg-none text-[#E8F0E4]',
                 )
               }
             >

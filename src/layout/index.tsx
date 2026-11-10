@@ -11,11 +11,14 @@ const RootLayout = () => {
     <div className="flex">
       <Toaster />
       <Sidebar />
-      <main className="ml-[15.58625rem] flex w-full justify-center">
-        <div className="flex w-full max-w-240 flex-col">
-          <Navbar />
+      <main className="ml-[17rem] flex w-full justify-center">
+        <div className={cn('flex w-full flex-col', pathname === '/' ? 'max-w-[78rem] px-8' : 'max-w-240')}>
+          {/* The overview carries its own header (name, photo, period); the navbar still loads who is signed in. */}
+          <div className={cn(pathname === '/' && 'hidden')}>
+            <Navbar />
+          </div>
           <div
-            className={cn(!pathname.includes('settings') ? 'mt-32' : 'pt-7')}
+            className={cn(pathname === '/' ? '' : !pathname.includes('settings') ? 'mt-32' : 'pt-7')}
           >
             <Outlet />
           </div>
